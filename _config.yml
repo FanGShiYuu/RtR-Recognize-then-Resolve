@@ -1,0 +1,7 @@
+remote_theme: aterenin/minima-reboot
+
+title: "CoDrivingLLM"
+
+footer_icons:
+- username: For Code
+  url: https://github.com/FanGShiYuu/CoDrivingLLM/tree/master
