@@ -9,6 +9,7 @@ A lack of understanding of interactions and the inability to effectively resolve
 To model the interaction process, identify the latent intentions of HDVs, and search for the optimal cooperative passing order, this paper proposes the RtR framework, as illustrated below. Initially, a BIPG is established to identify interaction breakdown and the intentions of HDVs. Additionally, the MCTS algorithm is utilized to determine the optimal passing order while ensuring the HDV intention constraints are met.
 
 ## Supplementary Experiments
+It should be noted that this experiment is only a supplementary addition to the main body of the paper. For a complete experimental comparison, please refer to the original text.
 
 #### A open intersection CAV-HDV interaction case
 <div style="text-align: center;">
