@@ -1,0 +1,20 @@
+data from Yiru
+
+folder命名——
+interaction_hv：HV-HV
+interaction_av_lt：AV(lt)-HV(gs)
+interaction_av_gs：HV(lt)-AV(gs)
+
+ego：左转车
+agent：直行车
+
+示例——
+0_agent_hv.csv：HV-HV左转抢行中第0个交互事件直行车的轨迹
+0_ego_hv.csv：HV-HV左转抢行中第0个交互事件左转车的轨迹
+0_refline_gs_hv.csv：HV-HV左转抢行中第0个交互事件直行车的参考线
+0_refline_lt_hv.csv：HV-HV左转抢行中第0个交互事件左转车的参考线
+
+0_agent_yield_hv.csv：HV-HV左转让行中第0个交互事件直行车的轨迹
+0_ego_yield_hv.csv：HV-HV左转让行中第0个交互事件左转车的轨迹
+0_refline_yield_gs_hv.csv：HV-HV左转让行中第0个交互事件直行车的参考线
+0_refline__yield_lt_hv.csv：HV-HV左转让行中第0个交互事件左转车的参考线
