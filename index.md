@@ -14,6 +14,9 @@ To model the interaction process, identify the latent intentions of HDVs, and se
 It should be noted that this experiment is only a supplementary addition to the main body of the paper. For a complete experimental comparison, please refer to the original text.
 
 #### A open intersection CAV-HDV interaction case
+
+The following video demonstrates a real-life interaction at an intersection between two CAVs and one HDV. The two black cars, located at the west and south inbound lanes, are CAVs, while the white vehicle at the east inbound lane is an HDV. Due to a misperception of the interaction process, the CAVs fail to correctly estimate the HDV's intention, leading to the driver of one of the CAVs taking control and making an emergency stop around the 4-second mark in the video. In this scenario, our proposed BIPG method could have identified the HDV's leading intention earlier, triggering collaboration and searching for the optimal cooperative passing sequence that satisfies the HDV's intention.
+
 <div style="text-align: center;">
   <video muted controls width="500" style="margin-right: 10px;">
     <source src="./src/Takeover_case.mp4" type="video/mp4">
