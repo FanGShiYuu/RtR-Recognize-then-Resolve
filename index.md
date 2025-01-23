@@ -15,8 +15,8 @@ It should be noted that this experiment is only a supplementary addition to the 
 
 #### A open intersection CAV-HDV interaction case
 <div style="text-align: center;">
-  <video muted controls width="420" style="margin-right: 10px;">
-    <source src="./src/case1_without.mp4" type="video/mp4">
+  <video muted controls width="700" style="margin-right: 10px;">
+    <source src="./src/Takeover_case.mp4" type="video/mp4">
   </video>
 </div>
 
