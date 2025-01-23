@@ -1,4 +1,5 @@
-Recognize then Resolve: A Hybrid Framework for Understanding Interaction and Cooperative Conflict Resolution in Mixed Traffic
+# Recognize then Resolve: A Hybrid Framework for Understanding Interaction and Cooperative Conflict Resolution in Mixed Traffic
+
 [Shiyu Fang](https://fangshiyuu.github.io/)
 
 ## Getting started 🚀
