@@ -21,6 +21,6 @@ It should be noted that this experiment is only a supplementary addition to the 
 </div>
 
 #### PET analysis across various penetration rate
-<img src="./src/PET_ALL.png" alt="framework" width="300"/><img src="./src/PET30.png" alt="framework" width="300"/>
+<img src="./src/PET_ALL.png" alt="framework" width="500"/><img src="./src/PET30.png" alt="framework" width="500"/>
 
-<img src="./src/PET50.png" alt="framework" width="300"/><img src="./src/PET100.png" alt="framework" width="300"/>
+<img src="./src/PET50.png" alt="framework" width="500"/><img src="./src/PET100.png" alt="framework" width="500"/>
