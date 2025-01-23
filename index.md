@@ -21,6 +21,12 @@ It should be noted that this experiment is only a supplementary addition to the 
 </div>
 
 #### PET analysis across various penetration rate
+This section supplements the distribution of PET under different penetration rates. Since we have already conducted a detailed safety evaluation of each method at a 70% penetration rate in the main text, here we provide additional clarification on the performance of the models under other penetration rates. 
+
+First, from the perspective of average PET, there is little difference among all methods, with each maintaining around 10 seconds, indicating that all four methods are capable of ensuring safety. However, from the minimum PET, the RtR framework proposed by us only experiences events with PET less than 3 seconds in scenarios with a low CAV penetration rate of 30%. No dangerous interactions were observed at other penetration rates. 
+
+On the other hand, the methods based on retained FCFS and iDFST can only guarantee safety when the penetration rate reaches 100%. This aligns with the point mentioned in the main text, where such methods, being based on preset rules, have limited ability to respond to uncontrolled HDVs. Finally, the cooperative game theory approach, due to its optimization objective mainly focusing on reducing delays, introduces certain risks when overemphasizing efficiency in traffic flow.
+
 <img src="./src/PET_ALL.png" alt="framework" width="500"/><img src="./src/PET30.png" alt="framework" width="500"/>
 
 <img src="./src/PET50.png" alt="framework" width="500"/><img src="./src/PET100.png" alt="framework" width="500"/>
