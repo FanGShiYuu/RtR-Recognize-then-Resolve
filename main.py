@@ -16,9 +16,8 @@ import comparison_method as cm
 
 Sim_times = 300
 suffix = ''
-M = ['MCTS-all', 'MCTS', 'single', 'FCFS', 'GAME', 'iDFST']
-# M = ['MCTS']
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\房世玉\AppData\Local\Programs\Python\Python310\Lib\site-packages\ffmpeg_3.4.2\bin\x64\ffmpeg.exe'
+# M = ['MCTS-all', 'MCTS', 'single', 'FCFS', 'GAME', 'iDFST']
+M = ['MCTS-all', 'MCTS', 'single']
 
 class Simulator:
     def __init__(self, case_id, method):
@@ -35,8 +34,6 @@ class Simulator:
         self.not_passed_vehicle_list = []
         self.method = method
         self.file_name, self.workbook = Environment.open_excel(case_id, suffix, self.method)
-        self.cal_time = 0
-        self.tri_time = 0
 
 
     def run(self):
@@ -45,32 +42,26 @@ class Simulator:
         # plt.show()
 
         " ---- option 2: save as gif ---- "
-        # ani = FuncAnimation(self.fig, self.update, interval=10, frames=Sim_times, blit=False, repeat=False, save_count=Sim_times)
-        # video_dir = f'./video/' + strftime("%Y-%m-%d", gmtime()) + '/'
-        # if not os.path.exists(video_dir):
-        #     os.makedirs(video_dir)
-        # ani.save(video_dir + str(self.case_id) + '.gif', dpi=300)
-
-        " ---- option 3: save as mp4 video ---- "
         ani = FuncAnimation(self.fig, self.update, interval=10, frames=Sim_times, blit=False, repeat=False, save_count=Sim_times)
-        Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=10, codec="h264", bitrate=-1, metadata=dict(dpi=600, artist='Me'))
-        video_dir = './video/' + strftime("%Y-%m-%d", gmtime()) + suffix + '-' + self.method + '/'
+        video_dir = f'./video/' + strftime("%Y-%m-%d", gmtime()) + '/'
         if not os.path.exists(video_dir):
             os.makedirs(video_dir)
-        ani.save(video_dir + str(self.case_id) + '.mp4', writer=writer)
-        CAL_LIST.append(self.cal_time)
-        TRI_LIST.append(self.tri_time)
-        plt.close()
+        ani.save(video_dir + str(self.case_id) + '.gif', dpi=300)
+
+        " ---- option 3: save as mp4 video ---- "
+        # ani = FuncAnimation(self.fig, self.update, interval=10, frames=Sim_times, blit=False, repeat=False, save_count=Sim_times)
+        # Writer = animation.writers['ffmpeg']
+        # writer = Writer(fps=10, codec="h264", bitrate=-1, metadata=dict(dpi=600, artist='Me'))
+        # video_dir = './video/' + strftime("%Y-%m-%d", gmtime()) + suffix + '-' + self.method + '/'
+        # if not os.path.exists(video_dir):
+        #     os.makedirs(video_dir)
+        # ani.save(video_dir + str(self.case_id) + '.mp4', writer=writer)
+        # plt.close()
 
     def update(self, frame):
         self.state_list = self.vehicle_info_update()
         self.plot_figs()
-        time2 = time.time()
         self.triggered = self.trigger_cooperation()
-        tri_t = (time.time() - time2)
-        self.tri_time += tri_t
-        # print(frame, self.triggered, self.cal_time, self.tri_time)
         workbook = Environment.write_data(self.workbook, self.state_list, frame)
         workbook.save(self.file_name)
 
@@ -130,7 +121,6 @@ class Simulator:
         return final_order
 
     def vehicle_info_update(self):
-        time1 = time.time()
         acc_list = []  # consider all vehicle as CAV, then adjust it if is HDV
         not_passed_state_list = []
         for vehicle in self.state_list:
@@ -161,7 +151,6 @@ class Simulator:
                     else:
                         acc_list.append(MIN_ACCELERATION)
         else:
-            # print('++++', len(not_passed_state_list) == len(self.not_passed_vehicle_list), self.final_order is not None, self.intention_remains)
             if len(not_passed_state_list) == len(self.not_passed_vehicle_list) and self.final_order is not None and self.intention_remains:
                 acc_list = self.acc_list
             else:
@@ -171,9 +160,6 @@ class Simulator:
                         acc_list.append(IDM(vehicle, opponent_vehicle).cal_acceleration())
                     else:
                         acc_list.append(MAX_ACCELERATION)
-
-        cal_t = (time.time() - time1)
-        self.cal_time += cal_t
 
         next_state_list = copy.deepcopy(self.state_list)
         intention_remains = True
@@ -223,10 +209,6 @@ class Simulator:
 
 
 for method in M:
-    CAL_LIST = []
-    TRI_LIST = []
     for id in range(100):
         Simulator(id, method).run()
-    print(f'+++{method}: sum cal{sum(CAL_LIST)}, sum tri{sum(TRI_LIST)}')
-    print(f'+++{method}: mean cal{sum(CAL_LIST)/len(CAL_LIST)}, mean tri{sum(TRI_LIST)/len(TRI_LIST)}')
 
