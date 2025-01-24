@@ -1,6 +1,6 @@
 ## Recognize then Resolve: A Hybrid Framework for Understanding Interaction and Cooperative Conflict Resolution in Mixed Traffic
 
-### [Shiyu Fang](https://fangshiyuu.github.io/)
+### [Shiyu Fang](https://fangshiyuu.github.io/), [Donghao Zhou](https://tops.tongji.edu.cn/info/1141/2012.htm)
 
 ## Abstract
 A lack of understanding of interactions and the inability to effectively resolve conflicts continue to impede the progress of Connected Autonomous Vehicles (CAVs) in their interactions with Human-Driven Vehicles (HDVs). To address this challenge, we propose the Recognize then Resolve (RtR) framework. First, a Bilateral Intention Progression Graph (BIPG) is constructed based on CAV-HDV interaction data to model the evolution of interactions and identify potential HDV intentions. Three typical interaction breakdown scenarios are then categorized, and key moments are defined for triggering cooperative conflict resolution. On this basis, a constrained Monte Carlo Tree Search (MCTS) algorithm is introduced to determine the optimal passage order while accommodating HDV intentions. Experimental results demonstrate that the proposed RtR framework outperforms other cooperative approaches in terms of safety and efficiency across various penetration rates, achieving results close to consistent cooperation while significantly reducing computational resources.
