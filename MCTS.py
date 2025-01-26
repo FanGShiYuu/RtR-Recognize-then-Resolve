@@ -23,7 +23,7 @@ def generate_batch_vehicles(vehicles):
     for vehicle in batch_vehicles:
         if len(batch_relation[vehicle['id']]) != 0:
             vehicle['multiple_vehicle'] += len(batch_relation[vehicle['id']])
-    # print('batch融合结果为：', batch_relation)
+    # print('batch：', batch_relation)
     return batch_vehicles, batch_relation
 
 def return_batch2full(vehicles, passed_order, batch_relation):
@@ -41,21 +41,21 @@ def return_batch2full(vehicles, passed_order, batch_relation):
 def organize_order(passed_vehicles):
     passed_order = [[]]
     for p_v in passed_vehicles:
-        for order in range(len(passed_order)-1, -1, -1):  # 从大通行权到小通行权
+        for order in range(len(passed_order)-1, -1, -1):  
             have_conflict = False
             for order_p_v in passed_order[order]:
                 if p_v['entrance'] + p_v['exit'] in CONFLICT_RELATION[order_p_v['entrance']][order_p_v['exit']]:
                     have_conflict = True
-            if not have_conflict:  # 不存在冲突
-                if order == 0:  # 如果已经搜索到最先通行顺序 直接添加到最优层
+            if not have_conflict:  
+                if order == 0: 
                     passed_order[order].append(p_v)
                 else:
-                    continue  # 继续向前搜索
-            else:  # 存在冲突
-                if order == len(passed_order) - 1:  # 如果order已经是最后一个了，另起一个新的通行次序
+                    continue  
+            else:  
+                if order == len(passed_order) - 1:  
                     passed_order.append([p_v])
                     break
-                else:  # 否则 加到后一个order
+                else: 
                     passed_order[order+1].append(p_v)
                     break
     passed_order_id = []
@@ -64,7 +64,7 @@ def organize_order(passed_vehicles):
         for p_v in order:
             order_id.append(p_v['id'])
         passed_order_id.append(order_id)
-    # print('已经通过的车辆编号:', passed_order_id)
+    # print('passed vehicle:', passed_order_id)
     return passed_order, passed_order_id
 
 def accumulate_delay(passed_order):
@@ -89,18 +89,18 @@ def accumulate_delay(passed_order):
         pass_time.append(order_pass_time)
         delay.append(order_delay_time)
         former_vehicle.append(order_former_vehicle)
-    # print('车辆离开交叉口的时间', pass_time)
+    # print('pass time', pass_time)
     return delay, former_vehicle
 
 def heuristic_rule(passed_vehicles, score):
     passed_order, passed_order_id = organize_order(passed_vehicles)
     for index_i, vehicle_i in enumerate(passed_vehicles):
         for index_j, vehicle_j in enumerate(passed_vehicles):
-            # 1. reachable cost 可达惩罚：避免处于同一进口道的车辆后车通行顺序先于前车
+            # 1. reachable cost 
             if vehicle_i['entrance'] == vehicle_j['entrance'] and vehicle_i['dis2des'] > 100 and vehicle_j['dis2des'] > 100:
                 if (vehicle_i['dis2des'] - vehicle_j['dis2des']) * (index_i - index_j) < 0:
                     score -= 100
-        # 2. interaction cost 交互惩罚：当HV为抢行意图时 需要将其通行权放在第一顺位
+        # 2. interaction cost 
         if vehicle_i['aggressive_intention'] == 1 and vehicle_i not in passed_order[0]:
             score -= 10000
         if vehicle_i['aggressive_intention'] == -1 and vehicle_i in passed_order[0]:
@@ -109,21 +109,20 @@ def heuristic_rule(passed_vehicles, score):
 
 class MCTSNode:
     def __init__(self, vehicles, passed_vehicles=None, parent=None):
-        self.vehicles = vehicles  # 剩余车辆
-        self.passed_vehicles = passed_vehicles if passed_vehicles is not None else []  # 当前通行顺序
-        self.total_score = 0  # 当前总分
-        self.visits = 0  # 访问次数
-        self.children = []  # 子节点
-        self.parent = parent  # 父节点
+        self.vehicles = vehicles  
+        self.passed_vehicles = passed_vehicles if passed_vehicles is not None else []  
+        self.total_score = 0  
+        self.visits = 0  
+        self.children = []  
+        self.parent = parent 
 
     def is_terminal(self):
-        return len(self.vehicles) == 0  # 没有车辆待通行
+        return len(self.vehicles) == 0  
 
     def is_fully_expanded(self):
         return len(self.children) == len(self.vehicles)
 
     def expand(self):
-        # 扩展节点，生成子节点
         for vehicle in self.vehicles:
             remaining_vehicles = self.vehicles.copy()
             remaining_vehicles.remove(vehicle)
@@ -132,7 +131,6 @@ class MCTSNode:
             self.children.append(child_node)
 
     def get_best_child(self, exploration_weight=1.41):
-        # 使用 UCB1 算法选择最佳子节点
         return max(self.children,
                    key=lambda child: (child.total_score / (child.visits + 1)) + exploration_weight * math.sqrt(
                        math.log(self.visits + 1) / (child.visits + 1)))
@@ -147,28 +145,27 @@ def mcts(root, iterations):
                 node.expand()
             else:
                 node = node.get_best_child()
-        # 3. Simulation: 在确定完整的通行顺序后再计算分数
-        passed_vehicles = node.passed_vehicles + node.vehicles  # 将剩余的车辆加入当前通行顺序
-        final_order, final_order_id = organize_order(passed_vehicles)  # 确定最终通行顺序
-        final_delay = accumulate_delay(final_order)[0]  # 计算最终延误
-        score = -sum(sum(d) for d in final_delay)  # 累计延误总和作为分数
+        # 3. Simulation: 
+        passed_vehicles = node.passed_vehicles + node.vehicles 
+        final_order, final_order_id = organize_order(passed_vehicles)  
+        final_delay = accumulate_delay(final_order)[0]
+        score = -sum(sum(d) for d in final_delay) 
         score = heuristic_rule(passed_vehicles, score)
         # print('第', _, '次迭代, order和延误为：', final_order_id, score)
-        # 4. Backpropagation: 回溯更新节点信息
+        # 4. Backpropagation:
         while node is not None:
             node.visits += 1
             node.total_score += score
-            node = node.parent  # 回溯到父节点
-    # 从根节点开始遍历，构建完整的通行顺序
+            node = node.parent 
     node = root
     best_order = []
     while not node.is_terminal():
         if not node.is_fully_expanded():
             node.expand()
         else:
-            node = node.get_best_child(exploration_weight=0)  # 不使用探索权重选择最终解
+            node = node.get_best_child(exploration_weight=0)  
         # print(len(node.children), [veh['id'] for veh in node.vehicles], node.is_terminal())
-        best_order.extend(node.passed_vehicles[len(best_order):])  # 获取新车辆加入通行顺序
+        best_order.extend(node.passed_vehicles[len(best_order):]) 
     return best_order, node.total_score
 
 if __name__ == "__main__":
@@ -194,18 +191,12 @@ if __name__ == "__main__":
     for i in range(10):
         print('-------------------')
         time1 = time.time()
-        # 初始化根节点
         batch_vehicles, batch_relation = generate_batch_vehicles(vehicles)
         root = MCTSNode(batch_vehicles)
-        # 执行 MCTS
         best_order, best_score = mcts(root, iterations=1000)
-        # 输出最佳通行顺序和总分
-        print("批处理最佳通行顺序:", [v["id"] for v in best_order], organize_order(best_order)[1])
         full_best_order = return_batch2full(vehicles, best_order, batch_relation)
-        print("解压后完整最佳通行顺序:", [v["id"] for v in full_best_order], organize_order(full_best_order)[1])
         best_order_delay = accumulate_delay(organize_order(best_order)[0])[0]
-        print("最佳score(越小越好):", sum(sum(d) for d in best_order_delay))
-        print('搜索通行顺序计算时间:', time.time() - time1)
+
 
     plt.figure()
     for veh in vehicles:
