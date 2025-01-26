@@ -38,7 +38,6 @@ class IDM:
         delta_v = self.ego_info['v'] - self.other_info['v']
         return delta_v
 
-    # 更新加速度
     def cal_acceleration(self):
         if self.other_info is not None:
             akgs = self.ego_info['v'] * self.idm_parameter[1] + self.ego_info['v'] * self.delta_v / 2 / np.sqrt(self.idm_parameter[2] * self.idm_parameter[3])
