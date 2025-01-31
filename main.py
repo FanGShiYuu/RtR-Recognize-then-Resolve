@@ -106,42 +106,46 @@ class Simulator:
 
     def vehicle_info_update(self):
         """ Update vehicle states based on decision-making """
-        acc_list = []  # List to store new acceleration values
-        not_passed_state_list = []  # Vehicles that haven't passed
+        acc_list = []  # consider all vehicle as CAV, then adjust it if is HDV
+        not_passed_state_list = []
         for vehicle in self.state_list:
             if Environment.find_opponent(vehicle, self.state_list) is not None:
                 not_passed_state_list.append(vehicle)
-        
         if self.triggered:
             if self.method == 'MCTS':
-                final_order = self.MCTS_coop(not_passed_state_list)  # Get final order from MCTS
+                final_order = self.MCTS_coop(not_passed_state_list)
             elif self.method == 'MCTS-all':
                 final_order = self.MCTS_coop(not_passed_state_list)
             elif self.method == 'FCFS':
-                final_order = cm.FCFS(not_passed_state_list)  # First-Come, First-Served method
+                final_order = cm.FCFS(not_passed_state_list)
             elif self.method == 'iDFST':
-                final_order = cm.iDFST(not_passed_state_list)  # iDFST method
+                final_order = cm.iDFST(not_passed_state_list)
             elif self.method == 'GAME':
-                final_order = cm.CoopGame(not_passed_state_list)  # Game-theory based cooperation
+                final_order = cm.CoopGame(not_passed_state_list)
             else:
                 final_order = None
-                raise ValueError('no such coop method')  # Raise error if method is not valid
-            
+                raise ValueError('no such coop method')
             self.final_order = final_order
-            # Update accelerations based on final order
             for vehicle in self.state_list:
                 if vehicle['id'] in final_order[0]:
                     acc_list.append(MAX_ACCELERATION)
                 else:
-                    acc_list.append(MIN_ACCELERATION)
+                    if vehicle['id'] not in [id for order in final_order for id in order]:
+                        acc_list.append(MAX_ACCELERATION)
+
+                    else:
+                        acc_list.append(MIN_ACCELERATION)
         else:
-            # If no cooperation, update accelerations based on IDM (Intelligent Driver Model)
-            for vehicle in self.state_list:
-                opponent_vehicle = Environment.find_opponent(vehicle, self.state_list, front=True)
-                if opponent_vehicle is not None:
-                    acc_list.append(IDM(vehicle, opponent_vehicle).cal_acceleration())
-                else:
-                    acc_list.append(MAX_ACCELERATION)
+            if len(not_passed_state_list) == len(
+                    self.not_passed_vehicle_list) and self.final_order is not None and self.intention_remains:
+                acc_list = self.acc_list
+            else:
+                for vehicle in self.state_list:
+                    opponent_vehicle = Environment.find_opponent(vehicle, self.state_list, front=True)
+                    if opponent_vehicle is not None:
+                        acc_list.append(IDM(vehicle, opponent_vehicle).cal_acceleration())
+                    else:
+                        acc_list.append(MAX_ACCELERATION)
 
         next_state_list = copy.deepcopy(self.state_list)
         intention_remains = True
