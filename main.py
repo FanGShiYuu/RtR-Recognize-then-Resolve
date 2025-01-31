@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from params import *
 from bayesian_game_agent import Bayesian_Agent
 from idm_controller import IDM
-import comparison_method as cm
 
 
 Sim_times = 300  # Simulation runs for 300 frames
