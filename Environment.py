@@ -452,20 +452,11 @@ def initialize_vehicle(veh_num):
             new_exit, new_state = default_exit_and_state(new_entrance, extra_direction)
             new_state['id'] = veh
             add = True
-            new_state['type'] = 'cav' if random.randint(0, 10) < 11 else random.choice(['agg', 'con', 'nor'])
+            new_state['type'] = 'cav' if random.randint(0, 10) < 6 else random.choice(['agg', 'con', 'nor'])  # TODO: change here to change penetration rate
             for state in state_list:
                 if str(new_state['entrance']) + str(new_state['exit']) in CONFLICT_RELATION[state['entrance']][state['exit']]:
                     if new_state['type'] == 'agg' and state['type'] == 'agg':
                         add = False
-                # if state['entrance'] == new_state['entrance']:
-                #     if new_state['dis2des'] > state['dis2des'] + 2 * VEH_L: 
-                #         if new_state['dis2des'] - state['dis2des'] - 2 * VEH_L > (new_state['v'] ** 2 - state['v'] ** 2) / 2 * abs(MIN_ACCELERATION):
-                #             add = False
-                #     if state['dis2des'] > new_state['dis2des'] + 2 * VEH_L:
-                #         if state['dis2des'] - new_state['dis2des'] - 2 * VEH_L > (state['v'] ** 2 - new_state['v'] ** 2) / 2 * abs(MIN_ACCELERATION):
-                #             add = False
-                #     else:
-                #         add = False
             new_state['aggressive_intention'] = 0  
             new_state['heading'] = 0
             new_state['multiple_vehicle'] = 1  
